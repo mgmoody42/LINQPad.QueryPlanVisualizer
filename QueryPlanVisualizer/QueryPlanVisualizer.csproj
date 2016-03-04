@@ -81,6 +81,76 @@
   <ItemGroup>
     <None Include="Resources\jquery-1.12.1.min.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\images\arithmetic_expression.gif" />
+    <EmbeddedResource Include="Resources\images\assert.gif" />
+    <EmbeddedResource Include="Resources\images\assign.gif" />
+    <EmbeddedResource Include="Resources\images\bitmap.gif" />
+    <EmbeddedResource Include="Resources\images\bookmark_lookup.gif" />
+    <EmbeddedResource Include="Resources\images\clustered_index_delete.gif" />
+    <EmbeddedResource Include="Resources\images\clustered_index_insert.gif" />
+    <EmbeddedResource Include="Resources\images\clustered_index_scan.gif" />
+    <EmbeddedResource Include="Resources\images\clustered_index_seek.gif" />
+    <EmbeddedResource Include="Resources\images\clustered_index_update.gif" />
+    <EmbeddedResource Include="Resources\images\collapse.gif" />
+    <EmbeddedResource Include="Resources\images\compute_scalar.gif" />
+    <EmbeddedResource Include="Resources\images\concatenation.gif" />
+    <EmbeddedResource Include="Resources\images\constant_scan.gif" />
+    <EmbeddedResource Include="Resources\images\convert.gif" />
+    <EmbeddedResource Include="Resources\images\declare.gif" />
+    <EmbeddedResource Include="Resources\images\deleted_scan.gif" />
+    <EmbeddedResource Include="Resources\images\distribute_streams.gif" />
+    <EmbeddedResource Include="Resources\images\dynamic.gif" />
+    <EmbeddedResource Include="Resources\images\fetch_query.gif" />
+    <EmbeddedResource Include="Resources\images\filter.gif" />
+    <EmbeddedResource Include="Resources\images\gather_streams.gif" />
+    <EmbeddedResource Include="Resources\images\hash_match.gif" />
+    <EmbeddedResource Include="Resources\images\if.gif" />
+    <EmbeddedResource Include="Resources\images\inserted_scan.gif" />
+    <EmbeddedResource Include="Resources\images\intrinsic.gif" />
+    <EmbeddedResource Include="Resources\images\keyset.gif" />
+    <EmbeddedResource Include="Resources\images\log_row_scan.gif" />
+    <EmbeddedResource Include="Resources\images\merge_interval.gif" />
+    <EmbeddedResource Include="Resources\images\merge_join.gif" />
+    <EmbeddedResource Include="Resources\images\nested_loops.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_delete.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_insert.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_scan.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_seek.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_spool.gif" />
+    <EmbeddedResource Include="Resources\images\nonclustered_index_update.gif" />
+    <EmbeddedResource Include="Resources\images\online_index_insert.gif" />
+    <EmbeddedResource Include="Resources\images\parameter_table_scan.gif" />
+    <EmbeddedResource Include="Resources\images\population_query.gif" />
+    <EmbeddedResource Include="Resources\images\rdi_lookup.gif" />
+    <EmbeddedResource Include="Resources\images\refresh_query.gif" />
+    <EmbeddedResource Include="Resources\images\remote_delete.gif" />
+    <EmbeddedResource Include="Resources\images\remote_insert.gif" />
+    <EmbeddedResource Include="Resources\images\remote_query.gif" />
+    <EmbeddedResource Include="Resources\images\remote_scan.gif" />
+    <EmbeddedResource Include="Resources\images\remote_update.gif" />
+    <EmbeddedResource Include="Resources\images\repartition_streams.gif" />
+    <EmbeddedResource Include="Resources\images\result.gif" />
+    <EmbeddedResource Include="Resources\images\row_count_spool.gif" />
+    <EmbeddedResource Include="Resources\images\segment.gif" />
+    <EmbeddedResource Include="Resources\images\sequence.gif" />
+    <EmbeddedResource Include="Resources\images\sequenceproject.gif" />
+    <EmbeddedResource Include="Resources\images\snapshot.gif" />
+    <EmbeddedResource Include="Resources\images\sort.gif" />
+    <EmbeddedResource Include="Resources\images\split.gif" />
+    <EmbeddedResource Include="Resources\images\spool.gif" />
+    <EmbeddedResource Include="Resources\images\stream_aggregate.gif" />
+    <EmbeddedResource Include="Resources\images\switch.gif" />
+    <EmbeddedResource Include="Resources\images\table_delete.gif" />
+    <EmbeddedResource Include="Resources\images\table_insert.gif" />
+    <EmbeddedResource Include="Resources\images\table_scan.gif" />
+    <EmbeddedResource Include="Resources\images\table_spool.gif" />
+    <EmbeddedResource Include="Resources\images\table_update.gif" />
+    <EmbeddedResource Include="Resources\images\table_valued_function.gif" />
+    <EmbeddedResource Include="Resources\images\top.gif" />
+    <EmbeddedResource Include="Resources\images\udx.gif" />
+    <EmbeddedResource Include="Resources\images\while.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -107,11 +108,18 @@ namespace Visualizer
         private static List<string> ExtractFiles()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LINQPadQueryVisualizer");
+            var imagesFolder = Path.Combine(folder, "images");
 
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
+
+            if (!Directory.Exists(imagesFolder))
+            {
+                Directory.CreateDirectory(imagesFolder);
+            }
+
 
             var qpJavascript = Path.Combine(folder, "qp.js");
             var qpStyleSheet = Path.Combine(folder, "qp.css");
@@ -120,6 +128,20 @@ namespace Visualizer
             File.WriteAllText(qpJavascript, Resources.jquery);
             File.WriteAllText(qpStyleSheet, Resources.qpStyleSheet);
             File.WriteAllText(jquery, Resources.qpJavascript);
+
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceNames = assembly.GetManifestResourceNames();
+
+            foreach (var name in resourceNames.Where(name => name.EndsWith(".gif")))
+            {
+                using (var stream = assembly.GetManifestResourceStream(name))
+                {
+                    using (var file = new FileStream(Path.Combine(imagesFolder, Path.GetFileNameWithoutExtension(name).Split('.').Last()+".gif"), FileMode.Create, FileAccess.Write))
+                    {
+                        stream.CopyTo(file);
+                    }
+                }
+            }
 
             return new List<string> { qpStyleSheet, qpJavascript, jquery };
         }
