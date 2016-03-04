@@ -18,6 +18,8 @@ namespace Visualizer
 {
     public static class QueryPlanVisualizer
     {
+        private static bool shouldExtract = true;
+
         public static void DumpPlan<T>(this IQueryable<T> queryable)
         {
             var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
@@ -112,35 +114,41 @@ namespace Visualizer
 
             if (!Directory.Exists(folder))
             {
+                shouldExtract = true;
                 Directory.CreateDirectory(folder);
             }
 
             if (!Directory.Exists(imagesFolder))
             {
+                shouldExtract = true;
                 Directory.CreateDirectory(imagesFolder);
             }
-
 
             var qpJavascript = Path.Combine(folder, "qp.js");
             var qpStyleSheet = Path.Combine(folder, "qp.css");
             var jquery = Path.Combine(folder, "jquery.js");
 
-            File.WriteAllText(qpJavascript, Resources.jquery);
-            File.WriteAllText(qpStyleSheet, Resources.qpStyleSheet);
-            File.WriteAllText(jquery, Resources.qpJavascript);
-
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceNames = assembly.GetManifestResourceNames();
-
-            foreach (var name in resourceNames.Where(name => name.EndsWith(".gif")))
+            if (shouldExtract)
             {
-                using (var stream = assembly.GetManifestResourceStream(name))
+                File.WriteAllText(qpJavascript, Resources.jquery);
+                File.WriteAllText(qpStyleSheet, Resources.qpStyleSheet);
+                File.WriteAllText(jquery, Resources.qpJavascript);
+
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceNames = assembly.GetManifestResourceNames();
+
+                foreach (var name in resourceNames.Where(name => name.EndsWith(".gif")))
                 {
-                    using (var file = new FileStream(Path.Combine(imagesFolder, Path.GetFileNameWithoutExtension(name).Split('.').Last()+".gif"), FileMode.Create, FileAccess.Write))
+                    using (var stream = assembly.GetManifestResourceStream(name))
                     {
-                        stream.CopyTo(file);
+                        using (var file = new FileStream(Path.Combine(imagesFolder, Path.GetFileNameWithoutExtension(name).Split('.').Last() + ".gif"), FileMode.Create, FileAccess.Write))
+                        {
+                            stream.CopyTo(file);
+                        }
                     }
                 }
+
+                shouldExtract = false;
             }
 
             return new List<string> { qpStyleSheet, qpJavascript, jquery };
