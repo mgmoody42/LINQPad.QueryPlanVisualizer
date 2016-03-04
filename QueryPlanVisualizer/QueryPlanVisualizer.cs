@@ -44,41 +44,13 @@ namespace Visualizer
                         {
                             reader.Read();
 
-                            var schema = new XmlSchemaSet();
-                            using (var planSchemaReader = XmlReader.Create(new StringReader(Resources.showplanxml)))
-                            {
-                                schema.Add("http://schemas.microsoft.com/sqlserver/2004/07/showplan", planSchemaReader);
-                            }
-
-                            var settings = new XmlReaderSettings
-                            {
-                                ValidationType = ValidationType.Schema,
-                                Schemas = schema,
-                            };
-
-
-                            var transform = new XslCompiledTransform(true);
-
-                            using (var xsltReader = XmlReader.Create(new StringReader(Resources.qpXslt)))
-                            {
-                                transform.Load(xsltReader);
-                            }
-
-                            var planHtml = new StringBuilder();
-
-                            using (var queryPlanReader = XmlReader.Create(new StringReader(reader.GetString(0)), settings))
-                            {
-                                using (var writer = XmlWriter.Create(planHtml, transform.OutputSettings))
-                                {
-                                    transform.Transform(queryPlanReader, writer);
-                                }
-                            }
+                            var planHtml = ConvertPlanToHtml(reader.GetString(0));
 
                             var html = string.Format(Resources.template, planHtml);
                             var webBrowser = new WebBrowser { DocumentText = html };
 
                             PanelManager.DisplayControl(webBrowser, "Query plan");
-                            
+
                             break;
                         }
                     }
@@ -93,6 +65,39 @@ namespace Visualizer
             {
                 Util.CurrentDataContext.Connection.Close();
             }
+        }
+
+        private static StringBuilder ConvertPlanToHtml(string planXml)
+        {
+            var schema = new XmlSchemaSet();
+            using (var planSchemaReader = XmlReader.Create(new StringReader(Resources.showplanxml)))
+            {
+                schema.Add("http://schemas.microsoft.com/sqlserver/2004/07/showplan", planSchemaReader);
+            }
+
+            var transform = new XslCompiledTransform(true);
+
+            using (var xsltReader = XmlReader.Create(new StringReader(Resources.qpXslt)))
+            {
+                transform.Load(xsltReader);
+            }
+
+            var planHtml = new StringBuilder();
+
+            var settings = new XmlReaderSettings
+            {
+                ValidationType = ValidationType.Schema,
+                Schemas = schema,
+            };
+
+            using (var queryPlanReader = XmlReader.Create(new StringReader(planXml), settings))
+            {
+                using (var writer = XmlWriter.Create(planHtml, transform.OutputSettings))
+                {
+                    transform.Transform(queryPlanReader, writer);
+                }
+            }
+            return planHtml;
         }
     }
 }
