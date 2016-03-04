@@ -10,6 +10,8 @@ using System.Xml.Xsl;
 
 using LINQPad;
 
+using Visualizer.Properties;
+
 namespace Visualizer
 {
     public static class QueryPlanVisualizer
@@ -43,34 +45,40 @@ namespace Visualizer
                             reader.Read();
 
                             var schema = new XmlSchemaSet();
-                            schema.Add("http://schemas.microsoft.com/sqlserver/2004/07/showplan",
-                                @"showplanxml.xsd");
+                            using (var planSchemaReader = XmlReader.Create(new StringReader(Resources.showplanxml)))
+                            {
+                                schema.Add("http://schemas.microsoft.com/sqlserver/2004/07/showplan", planSchemaReader);
+                            }
 
-                            var settings = new XmlReaderSettings()
+                            var settings = new XmlReaderSettings
                             {
                                 ValidationType = ValidationType.Schema,
                                 Schemas = schema,
                             };
 
-                            using (var xmlReader = XmlReader.Create(new StringReader(reader.GetString(0)), settings))
+
+                            var transform = new XslCompiledTransform(true);
+
+                            using (var xsltReader = XmlReader.Create(new StringReader(Resources.qpXslt)))
                             {
-                                var transform = new XslCompiledTransform(true);
-                                transform.Load(@"qp.xslt");
-
-                                var returnValue = new StringBuilder();
-                                using (var writer = XmlWriter.Create(returnValue, transform.OutputSettings))
-                                {
-                                    transform.Transform(xmlReader, writer);
-                                }
-
-                                var template = File.ReadAllText(@"template.html");
-                                var html = string.Format(template, returnValue);
-                                var webBrowser = new WebBrowser {DocumentText = html};
-                                
-
-                                PanelManager.DisplayControl(webBrowser, "Query plan");
+                                transform.Load(xsltReader);
                             }
 
+                            var planHtml = new StringBuilder();
+
+                            using (var queryPlanReader = XmlReader.Create(new StringReader(reader.GetString(0)), settings))
+                            {
+                                using (var writer = XmlWriter.Create(planHtml, transform.OutputSettings))
+                                {
+                                    transform.Transform(queryPlanReader, writer);
+                                }
+                            }
+
+                            var html = string.Format(Resources.template, planHtml);
+                            var webBrowser = new WebBrowser { DocumentText = html };
+
+                            PanelManager.DisplayControl(webBrowser, "Query plan");
+                            
                             break;
                         }
                     }
