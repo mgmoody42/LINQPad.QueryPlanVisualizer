@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -46,7 +47,10 @@ namespace Visualizer
 
                             var planHtml = ConvertPlanToHtml(reader.GetString(0));
 
-                            var html = string.Format(Resources.template, planHtml);
+                            var files = ExtractFiles();
+                            files.Add(planHtml);
+
+                            var html = string.Format(Resources.template, files.ToArray());
                             var webBrowser = new WebBrowser { DocumentText = html };
 
                             PanelManager.DisplayControl(webBrowser, "Query plan");
@@ -67,7 +71,7 @@ namespace Visualizer
             }
         }
 
-        private static StringBuilder ConvertPlanToHtml(string planXml)
+        private static string ConvertPlanToHtml(string planXml)
         {
             var schema = new XmlSchemaSet();
             using (var planSchemaReader = XmlReader.Create(new StringReader(Resources.showplanxml)))
@@ -97,7 +101,27 @@ namespace Visualizer
                     transform.Transform(queryPlanReader, writer);
                 }
             }
-            return planHtml;
+            return planHtml.ToString();
+        }
+
+        private static List<string> ExtractFiles()
+        {
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LINQPadQueryVisualizer");
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            var qpJavascript = Path.Combine(folder, "qp.js");
+            var qpStyleSheet = Path.Combine(folder, "qp.css");
+            var jquery = Path.Combine(folder, "jquery.js");
+
+            File.WriteAllText(qpJavascript, Resources.jquery);
+            File.WriteAllText(qpStyleSheet, Resources.qpStyleSheet);
+            File.WriteAllText(jquery, Resources.qpJavascript);
+
+            return new List<string> { qpStyleSheet, qpJavascript, jquery };
         }
     }
 }

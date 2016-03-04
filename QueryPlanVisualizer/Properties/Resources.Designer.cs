@@ -61,6 +61,16 @@ namespace Visualizer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /*! jQuery v1.12.1 | (c) jQuery Foundation | jquery.org/license */
+        ///!function(a,b){&quot;object&quot;==typeof module&amp;&amp;&quot;object&quot;==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error(&quot;jQuery requires a window with a document&quot;);return b(a)}:b(a)}(&quot;undefined&quot;!=typeof window?window:this,function(a,b){var c=[],d=a.document,e=c.slice,f=c.concat,g=c.push,h=c.indexOf,i={},j=i.toString,k=i.hasOwnProperty,l={},m=&quot;1.12.1&quot;,n=function(a,b){return new n.fn.init(a,b)},o=/^[\s\uFEFF\xA0]+| [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string jquery {
+            get {
+                return ResourceManager.GetString("jquery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to if (typeof (QP) == &quot;undefined&quot; || !QP) {
         ///    var QP = {}
         ///};
@@ -165,12 +175,18 @@ namespace Visualizer.Properties {
         ///&lt;head&gt;
         ///    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html;charset=utf-8&quot; /&gt;
         ///    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot; /&gt;
-        ///    &lt;link type=&quot;text/css&quot; media=&quot;all&quot; rel=&quot;stylesheet&quot; href=&quot;C:\Users\gdalakishvili\Documents\LINQPad Queries\qp.css&quot; /&gt;
-        ///    &lt;script type=&quot;text/javascript&quot; src=&quot;C:\Users\gdalakishvili\Documents\LINQPad Queries\qp.js&quot;&gt;&lt;/script&gt;
-        ///    &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js&quot;&gt;&lt;/script&gt;
+        ///    &lt;link type=&quot;text/css&quot; media=&quot;all&quot; rel=&quot;stylesheet&quot; href=&quot;{0}&quot; /&gt;
+        ///    &lt;script type=&quot;text/javascript&quot; src=&quot;{1}&quot;&gt;&lt;/script&gt;
+        ///    &lt;script src=&quot;{2}&quot;&gt;&lt;/script&gt;
         ///&lt;/head&gt;
         ///&lt;body&gt;
-        ///    [rest of string was truncated]&quot;;.
+        ///    {3}
+        ///    &lt;script type=&quot;text/javascript&quot;&gt;
+        ///        $(document).ready(function() {{
+        ///                QP.drawLines($(&quot;.qp-root&quot;));
+        ///            }});
+        ///    &lt;/script&gt;
+        ///&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string template {
             get {
