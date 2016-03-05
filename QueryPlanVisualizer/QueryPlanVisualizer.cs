@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Xsl;
 using ExecutionPlanVisualizer.Properties;
@@ -18,6 +19,7 @@ namespace ExecutionPlanVisualizer
     public static class QueryPlanVisualizer
     {
         private const string ExecutionPlanPanelTitle = "Query Execution Plan";
+        private static readonly XNamespace PlanXmlNamespace = "http://schemas.microsoft.com/sqlserver/2004/07/showplan";
         private static bool shouldExtract = true;
 
         public static void DumpPlan<T>(this IQueryable<T> queryable)
@@ -39,7 +41,7 @@ namespace ExecutionPlanVisualizer
                 {
                     command.ExecuteNonQuery();
                 }
-                
+
                 using (var reader = Util.CurrentDataContext.GetCommand(queryable).ExecuteReader())
                 {
                     while (reader.NextResult())
@@ -53,6 +55,8 @@ namespace ExecutionPlanVisualizer
 
                             var files = ExtractFiles();
                             files.Add(planHtml);
+
+                            GetMissingIndexes(planXml);
 
                             var html = string.Format(Resources.template, files.ToArray());
                             var queryPlanUserControl = new QueryPlanUserControl
@@ -84,7 +88,7 @@ namespace ExecutionPlanVisualizer
             var schema = new XmlSchemaSet();
             using (var planSchemaReader = XmlReader.Create(new StringReader(Resources.showplanxml)))
             {
-                schema.Add("http://schemas.microsoft.com/sqlserver/2004/07/showplan", planSchemaReader);
+                schema.Add(PlanXmlNamespace.NamespaceName, planSchemaReader);
             }
 
             var transform = new XslCompiledTransform(true);
@@ -157,6 +161,54 @@ namespace ExecutionPlanVisualizer
             }
 
             return new List<string> { qpStyleSheet, qpJavascript, jquery };
+        }
+
+        private static List<MissingIndexDetails> GetMissingIndexes(string planXml)
+        {
+            var document = XDocument.Parse(planXml);
+
+            var missingIndexGroups = document.Descendants(PlanXmlNamespace.WithName("MissingIndexGroup"));
+
+            var result = from missingIndexGroup in missingIndexGroups
+
+                         let missingIndexes = missingIndexGroup.Descendants(PlanXmlNamespace.WithName("MissingIndex"))
+
+                         let indexes = from missingIndex in missingIndexes
+                                       let columnGroups = missingIndex.Descendants(PlanXmlNamespace.WithName("ColumnGroup"))
+
+                                       let equalityColumns = (from columnGroup in columnGroups
+                                                              where columnGroup.AttributeValue("Usage") == "EQUALITY"
+                                                              from column in columnGroup.Descendants()
+                                                              select column.AttributeValue("Name"))
+
+                                       let inequalityColumns = (from columnGroup in columnGroups
+                                                                where columnGroup.AttributeValue("Usage") == "INEQUALITY"
+                                                                from column in columnGroup.Descendants()
+                                                                select column.AttributeValue("Name"))
+
+                                       let includeColumns = (from columnGroup in columnGroups
+                                                             where columnGroup.AttributeValue("Usage") == "INCLUDE"
+                                                             from column in columnGroup.Descendants()
+                                                             select column.AttributeValue("Name"))
+
+                                       select new MissingIndexDetails
+                                       {
+                                           Impact = Convert.ToDouble(missingIndexGroup.AttributeValue("Impact")),
+
+                                           Database = missingIndex.AttributeValue("Database"),
+                                           Table = missingIndex.AttributeValue("Table"),
+                                           Schema = missingIndex.AttributeValue("Schema"),
+
+                                           EqualityColumns = new List<string>(equalityColumns),
+                                           InequalityColumns = new List<string>(inequalityColumns),
+
+                                           IncludeColumns = new List<string>(includeColumns)
+                                       }
+
+                         from index in indexes
+                         select index;
+
+            return result.ToList();
         }
     }
 }
