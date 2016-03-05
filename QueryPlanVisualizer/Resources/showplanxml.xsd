@@ -81,6 +81,7 @@
     <xsd:attribute name="StatementEstRows" type="xsd:double" use="optional" />
     <xsd:attribute name="StatementId" type="xsd:int" use="optional" />
     <xsd:attribute name="StatementOptmLevel" type="xsd:string" use="optional" />
+    <xsd:attribute name="SecurityPolicyApplied" type="xsd:boolean" use="optional" />
     <xsd:attribute name="StatementOptmEarlyAbortReason" use="optional">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
@@ -508,6 +509,7 @@
           <xsd:attribute name="ActualRebinds" type="xsd:unsignedLong" use="optional" />
           <xsd:attribute name="ActualRewinds" type="xsd:unsignedLong" use="optional" />
           <xsd:attribute name="ActualRows" type="xsd:unsignedLong" use="required" />
+          <xsd:attribute name="ActualRowsRead" type="xsd:unsignedLong" use="optional" />
           <xsd:attribute name="Batches" type="xsd:unsignedLong" use="optional" />
           <xsd:attribute name="ActualEndOfScans" type="xsd:unsignedLong" use="required" />
           <xsd:attribute name="ActualExecutions" type="xsd:unsignedLong" use="required" />
