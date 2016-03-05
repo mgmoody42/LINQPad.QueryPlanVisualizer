@@ -48,15 +48,20 @@ namespace Visualizer
                         {
                             reader.Read();
 
-                            var planHtml = ConvertPlanToHtml(reader.GetString(0));
+                            var planXml = reader.GetString(0);
+                            var planHtml = ConvertPlanToHtml(planXml);
 
                             var files = ExtractFiles();
                             files.Add(planHtml);
 
                             var html = string.Format(Resources.template, files.ToArray());
-                            var webBrowser = new WebBrowser { DocumentText = html };
+                            var queryPlanUserControl = new QueryPlanUserControl()
+                            {
+                                PlanXml = planXml,
+                                PlanHtml = html
+                            };
 
-                            PanelManager.DisplayControl(webBrowser, "Query plan");
+                            PanelManager.DisplayControl(queryPlanUserControl, "Query plan");
 
                             break;
                         }
