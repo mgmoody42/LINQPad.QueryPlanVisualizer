@@ -7,8 +7,8 @@
     <ProjectGuid>{DF42BBC7-9733-4FD3-9758-13A1F657CFBB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Visualizer</RootNamespace>
-    <AssemblyName>QueryPlanVisualizer</AssemblyName>
+    <RootNamespace>ExecutionPlanVisualizer</RootNamespace>
+    <AssemblyName>ExecutionPlanVisualizer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

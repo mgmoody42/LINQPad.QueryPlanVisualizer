@@ -9,15 +9,15 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Xsl;
-
+using ExecutionPlanVisualizer.Properties;
 using LINQPad;
+using Visualizer;
 
-using Visualizer.Properties;
-
-namespace Visualizer
+namespace ExecutionPlanVisualizer
 {
     public static class QueryPlanVisualizer
     {
+        private const string ExecutionPlanPanelTitle = "Query Execution Plan";
         private static bool shouldExtract = true;
 
         public static void DumpPlan<T>(this IQueryable<T> queryable)
@@ -27,7 +27,7 @@ namespace Visualizer
             if (sqlConnection == null)
             {
                 var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
-                PanelManager.DisplayControl(control);
+                PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace Visualizer
                 {
                     command.ExecuteNonQuery();
                 }
-
+                
                 using (var reader = Util.CurrentDataContext.GetCommand(queryable).ExecuteReader())
                 {
                     while (reader.NextResult())
@@ -55,13 +55,13 @@ namespace Visualizer
                             files.Add(planHtml);
 
                             var html = string.Format(Resources.template, files.ToArray());
-                            var queryPlanUserControl = new QueryPlanUserControl()
+                            var queryPlanUserControl = new QueryPlanUserControl
                             {
                                 PlanXml = planXml,
                                 PlanHtml = html
                             };
 
-                            PanelManager.DisplayControl(queryPlanUserControl, "Query plan");
+                            PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
 
                             break;
                         }
@@ -71,7 +71,7 @@ namespace Visualizer
             catch (Exception exception)
             {
                 var control = new Label { Text = exception.ToString() };
-                PanelManager.DisplayControl(control);
+                PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
             finally
             {
