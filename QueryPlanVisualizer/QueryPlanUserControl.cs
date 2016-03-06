@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ExecutionPlanVisualizer
@@ -18,10 +19,7 @@ namespace ExecutionPlanVisualizer
             openPlanButton.Text = $"Open with {fileDescription}";
         }
 
-        public string PlanHtml
-        {
-            set { webBrowser1.DocumentText = value; }
-        }
+        public string PlanHtml { get; set; }
 
         public string PlanXml { get; set; }
 
@@ -56,6 +54,17 @@ namespace ExecutionPlanVisualizer
         private void PlanLocationLinkLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("explorer.exe", string.Format("/select,\"{0}\"", planLocationLinkLabel.Text));
+        }
+
+        private void QueryPlanUserControlVisibleChanged(object sender, EventArgs e)
+        {
+            webBrowser.DocumentText = PlanHtml;
+
+            if (Indexes.Any())
+            {
+                missingIndexesButton.Visible = true;
+                missingIndexesButton.Text = string.Format(missingIndexesButton.Text, Indexes.Count, Indexes.Count > 1 ? "es" : "");
+            }
         }
     }
 }
