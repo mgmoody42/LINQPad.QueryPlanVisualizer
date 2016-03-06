@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Visualizer
+namespace ExecutionPlanVisualizer
 {
     public partial class QueryPlanUserControl : UserControl
     {
@@ -29,6 +24,8 @@ namespace Visualizer
         }
 
         public string PlanXml { get; set; }
+
+        public List<MissingIndexDetails> Indexes { get; set; }
 
         private void SavePlanButtonClick(object sender, EventArgs e)
         {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace ExecutionPlanVisualizer
 {
-    class MissingIndexDetails
+    public class MissingIndexDetails
     {
         public double Impact { get; set; }
 

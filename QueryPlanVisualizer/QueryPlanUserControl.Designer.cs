@@ -1,4 +1,4 @@
-﻿namespace Visualizer
+﻿namespace ExecutionPlanVisualizer
 {
     partial class QueryPlanUserControl
     {
