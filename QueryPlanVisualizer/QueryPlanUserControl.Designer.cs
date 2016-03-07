@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.savePlanButton = new System.Windows.Forms.Button();
             this.savePlanFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -42,11 +42,13 @@
             this.indexesTabPage = new System.Windows.Forms.TabPage();
             this.indexesDataGridView = new System.Windows.Forms.DataGridView();
             this.createIndexColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.impactDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.schemaDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.scriptDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.missingIndexDetailsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.indexLabel = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.planTabPage.SuspendLayout();
             this.indexesTabPage.SuspendLayout();
@@ -173,8 +175,8 @@
             // 
             // createIndexColumn
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.createIndexColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.createIndexColumn.DefaultCellStyle = dataGridViewCellStyle5;
             this.createIndexColumn.FillWeight = 20F;
             this.createIndexColumn.HeaderText = "";
             this.createIndexColumn.MinimumWidth = 100;
@@ -183,6 +185,15 @@
             this.createIndexColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.createIndexColumn.Text = "Create Index";
             this.createIndexColumn.UseColumnTextForButtonValue = true;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(577, 8);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(142, 23);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.TabIndex = 7;
+            this.progressBar.Visible = false;
             // 
             // impactDataGridViewTextBoxColumn
             // 
@@ -214,8 +225,8 @@
             // scriptDataGridViewTextBoxColumn
             // 
             this.scriptDataGridViewTextBoxColumn.DataPropertyName = "Script";
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.scriptDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.scriptDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle6;
             this.scriptDataGridViewTextBoxColumn.FillWeight = 50F;
             this.scriptDataGridViewTextBoxColumn.HeaderText = "Script";
             this.scriptDataGridViewTextBoxColumn.Name = "scriptDataGridViewTextBoxColumn";
@@ -226,10 +237,22 @@
             // 
             this.missingIndexDetailsBindingSource.DataSource = typeof(ExecutionPlanVisualizer.MissingIndexDetails);
             // 
+            // indexLabel
+            // 
+            this.indexLabel.AutoSize = true;
+            this.indexLabel.Location = new System.Drawing.Point(739, 13);
+            this.indexLabel.Name = "indexLabel";
+            this.indexLabel.Size = new System.Drawing.Size(74, 13);
+            this.indexLabel.TabIndex = 8;
+            this.indexLabel.Text = "Creating index";
+            this.indexLabel.Visible = false;
+            // 
             // QueryPlanUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.indexLabel);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.planLocationLinkLabel);
             this.Controls.Add(this.planSavedLabel);
@@ -266,5 +289,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn tableDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn scriptDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewButtonColumn createIndexColumn;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label indexLabel;
     }
 }

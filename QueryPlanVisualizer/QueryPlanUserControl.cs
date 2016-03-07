@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LINQPad;
 
@@ -122,6 +123,8 @@ namespace ExecutionPlanVisualizer
             try
             {
                 indexesDataGridView.Enabled = false;
+                progressBar.Visible = indexLabel.Visible = true;
+
                 await DatabaseHelper.CreateIndexAsync(Util.CurrentDataContext.Connection, script);
 
                 MessageBox.Show("Index created");
@@ -132,6 +135,8 @@ namespace ExecutionPlanVisualizer
             }
 
             indexesDataGridView.Enabled = true;
+
+            progressBar.Visible = indexLabel.Visible = false;
         }
     }
 }
