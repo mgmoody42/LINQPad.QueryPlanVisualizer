@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.savePlanButton = new System.Windows.Forms.Button();
             this.savePlanFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -41,12 +41,12 @@
             this.planTabPage = new System.Windows.Forms.TabPage();
             this.indexesTabPage = new System.Windows.Forms.TabPage();
             this.indexesDataGridView = new System.Windows.Forms.DataGridView();
-            this.missingIndexDetailsBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.createIndexColumn = new System.Windows.Forms.DataGridViewButtonColumn();
             this.impactDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.schemaDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.scriptDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.createIndexColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.missingIndexDetailsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabControl.SuspendLayout();
             this.planTabPage.SuspendLayout();
             this.indexesTabPage.SuspendLayout();
@@ -168,11 +168,21 @@
             this.indexesDataGridView.RowHeadersWidth = 4;
             this.indexesDataGridView.Size = new System.Drawing.Size(849, 449);
             this.indexesDataGridView.TabIndex = 0;
+            this.indexesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.IndexesDataGridViewCellContentClick);
             this.indexesDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.IndexesDataGridViewDataBindingComplete);
             // 
-            // missingIndexDetailsBindingSource
+            // createIndexColumn
             // 
-            this.missingIndexDetailsBindingSource.DataSource = typeof(ExecutionPlanVisualizer.MissingIndexDetails);
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.createIndexColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            this.createIndexColumn.FillWeight = 20F;
+            this.createIndexColumn.HeaderText = "";
+            this.createIndexColumn.MinimumWidth = 100;
+            this.createIndexColumn.Name = "createIndexColumn";
+            this.createIndexColumn.ReadOnly = true;
+            this.createIndexColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.createIndexColumn.Text = "Create Index";
+            this.createIndexColumn.UseColumnTextForButtonValue = true;
             // 
             // impactDataGridViewTextBoxColumn
             // 
@@ -212,18 +222,9 @@
             this.scriptDataGridViewTextBoxColumn.ReadOnly = true;
             this.scriptDataGridViewTextBoxColumn.Width = 59;
             // 
-            // createIndexColumn
+            // missingIndexDetailsBindingSource
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.createIndexColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.createIndexColumn.FillWeight = 20F;
-            this.createIndexColumn.HeaderText = "";
-            this.createIndexColumn.MinimumWidth = 100;
-            this.createIndexColumn.Name = "createIndexColumn";
-            this.createIndexColumn.ReadOnly = true;
-            this.createIndexColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.createIndexColumn.Text = "Create Index";
-            this.createIndexColumn.UseColumnTextForButtonValue = true;
+            this.missingIndexDetailsBindingSource.DataSource = typeof(ExecutionPlanVisualizer.MissingIndexDetails);
             // 
             // QueryPlanUserControl
             // 
