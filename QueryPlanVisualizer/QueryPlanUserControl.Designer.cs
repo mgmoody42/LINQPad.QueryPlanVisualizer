@@ -105,6 +105,7 @@
             this.missingIndexesButton.TabIndex = 5;
             this.missingIndexesButton.Text = "{0} Missing Index{1}";
             this.missingIndexesButton.UseVisualStyleBackColor = true;
+            this.missingIndexesButton.Visible = false;
             // 
             // QueryPlanUserControl
             // 

@@ -15,8 +15,15 @@ namespace ExecutionPlanVisualizer
 
             var assocQueryString = NativeMethods.AssocQueryString(NativeMethods.AssocStr.Executable, ".sqlplan");
 
-            var fileDescription = FileVersionInfo.GetVersionInfo(assocQueryString).FileDescription;
-            openPlanButton.Text = $"Open with {fileDescription}";
+            if (string.IsNullOrEmpty(assocQueryString))
+            {
+                openPlanButton.Visible = false;
+            }
+            else
+            {
+                var fileDescription = FileVersionInfo.GetVersionInfo(assocQueryString).FileDescription;
+                openPlanButton.Text = $"Open with {fileDescription}";
+            }
         }
 
         public string PlanHtml { get; set; }
