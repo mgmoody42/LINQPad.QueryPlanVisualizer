@@ -78,6 +78,28 @@ namespace ExecutionPlanVisualizer
             }
 
             indexesTabPage.Text = $"{Indexes.Count} Missing Index{(Indexes.Count > 1 ? "es" : "")}";
+
+            indexesDataGridView.DataSource = Indexes;
+            indexesDataGridView.ResetBindings();
+        }
+
+        private void IndexesDataGridViewDataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            //http://stackoverflow.com/a/10049887/239438
+            for (int i = 0; i < indexesDataGridView.Columns.Count - 1; i++)
+            {
+                indexesDataGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            indexesDataGridView.Columns[indexesDataGridView.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            indexesDataGridView.Columns[indexesDataGridView.Columns.Count - 2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            for (int i = 0; i < indexesDataGridView.Columns.Count; i++)
+            {
+                int width = indexesDataGridView.Columns[i].Width;
+                indexesDataGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                indexesDataGridView.Columns[i].Width = width;
+            }
         }
     }
 }
