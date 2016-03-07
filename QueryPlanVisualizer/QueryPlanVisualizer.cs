@@ -28,55 +28,31 @@ namespace ExecutionPlanVisualizer
 
             try
             {
-                Util.CurrentDataContext.Connection.Open();
+                var planXml = DatabaseHelper.GetSqlServerQueryExecutionPlan(Util.CurrentDataContext.Connection, queryable);
 
-                using (var command = new SqlCommand("SET STATISTICS XML ON", sqlConnection))
+                var queryPlanProcessor = new QueryPlanProcessor(planXml);
+
+                var indexes = queryPlanProcessor.GetMissingIndexes();
+                var planHtml = queryPlanProcessor.ConvertPlanToHtml();
+
+
+                var files = ExtractFiles();
+                files.Add(planHtml);
+
+                var html = string.Format(Resources.template, files.ToArray());
+                var queryPlanUserControl = new QueryPlanUserControl
                 {
-                    command.ExecuteNonQuery();
-                }
+                    PlanXml = planXml,
+                    PlanHtml = html,
+                    Indexes = indexes
+                };
 
-                using (var reader = Util.CurrentDataContext.GetCommand(queryable).ExecuteReader())
-                {
-                    while (reader.NextResult())
-                    {
-                        if (reader.GetName(0) == "Microsoft SQL Server 2005 XML Showplan")
-                        {
-                            reader.Read();
-
-                            var planXml = reader.GetString(0);
-
-                            var queryPlanProcessor = new QueryPlanProcessor(planXml);
-
-                            var indexes = queryPlanProcessor.GetMissingIndexes();
-                            var planHtml = queryPlanProcessor.ConvertPlanToHtml();
-
-
-                            var files = ExtractFiles();
-                            files.Add(planHtml);
-
-                            var html = string.Format(Resources.template, files.ToArray());
-                            var queryPlanUserControl = new QueryPlanUserControl
-                            {
-                                PlanXml = planXml,
-                                PlanHtml = html,
-                                Indexes = indexes
-                            };
-
-                            PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
-
-                            break;
-                        }
-                    }
-                }
+                PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
             }
             catch (Exception exception)
             {
                 var control = new Label { Text = exception.ToString() };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
-            }
-            finally
-            {
-                Util.CurrentDataContext.Connection.Close();
             }
         }
 

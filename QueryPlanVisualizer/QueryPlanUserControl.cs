@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using LINQPad;
 
@@ -108,14 +105,14 @@ namespace ExecutionPlanVisualizer
         private async void IndexesDataGridViewCellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //http://stackoverflow.com/a/13687844/239438
-            var senderGrid = (DataGridView)sender;
 
-            if (!(senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn) || e.RowIndex < 0)
+            if (!(indexesDataGridView.Columns[e.ColumnIndex] is DataGridViewButtonColumn) || e.RowIndex < 0)
             {
                 return;
             }
 
-            if (MessageBox.Show("Do you really want to create this index?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (MessageBox.Show("Do you really want to create this index?", "Confirm", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) != DialogResult.Yes)
             {
                 return;
             }
@@ -124,14 +121,8 @@ namespace ExecutionPlanVisualizer
 
             try
             {
-                await Util.CurrentDataContext.Connection.OpenAsync();
-
-                using (var command = Util.CurrentDataContext.Connection.CreateCommand())
-                {
-                    command.CommandText = script;
-                    var result = await command.ExecuteNonQueryAsync();
-                }
                 indexesDataGridView.Enabled = false;
+                await DatabaseHelper.CreateIndexAsync(Util.CurrentDataContext.Connection, script);
 
                 MessageBox.Show("Index created");
             }
@@ -139,10 +130,7 @@ namespace ExecutionPlanVisualizer
             {
                 MessageBox.Show($"Cannot create index. {exception.Message}");
             }
-            finally
-            {
-                Util.CurrentDataContext.Connection.Close();
-            }
+
             indexesDataGridView.Enabled = true;
         }
     }
