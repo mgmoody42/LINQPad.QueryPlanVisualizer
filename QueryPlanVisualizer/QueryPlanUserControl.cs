@@ -30,7 +30,7 @@ namespace ExecutionPlanVisualizer
 
         public string PlanXml { get; set; }
 
-        public List<MissingIndexDetails> Indexes { get; set; }
+        public List<MissingIndexDetails> Indexes { get; set; } = new List<MissingIndexDetails>();
 
         private void SavePlanButtonClick(object sender, EventArgs e)
         {
@@ -60,18 +60,24 @@ namespace ExecutionPlanVisualizer
 
         private void PlanLocationLinkLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("explorer.exe", string.Format("/select,\"{0}\"", planLocationLinkLabel.Text));
+            Process.Start("explorer.exe", $"/select,\"{planLocationLinkLabel.Text}\"");
         }
 
         private void QueryPlanUserControlVisibleChanged(object sender, EventArgs e)
         {
             webBrowser.DocumentText = PlanHtml;
 
-            if (Indexes.Any())
+            if (Indexes.Count > 0 && tabControl.TabPages.Count == 1)
             {
-                missingIndexesButton.Visible = true;
-                missingIndexesButton.Text = string.Format(missingIndexesButton.Text, Indexes.Count, Indexes.Count > 1 ? "es" : "");
+                tabControl.TabPages.Add(indexesTabPage);
             }
+
+            if (Indexes.Count == 0 && tabControl.TabPages.Count > 1)
+            {
+                tabControl.TabPages.Remove(indexesTabPage);
+            }
+
+            indexesTabPage.Text = $"{Indexes.Count} Missing Index{(Indexes.Count > 1 ? "es" : "")}";
         }
     }
 }
