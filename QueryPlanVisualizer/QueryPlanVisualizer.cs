@@ -53,25 +53,15 @@ namespace ExecutionPlanVisualizer
                     if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        using (var token = Util.GetQueryLifeExtensionToken())
-                        {
-                            DumpPlan(queryable);
-                        }
+                        DumpPlan(queryable);
                     }
                 };
 
-                if (outputPanel == null)
-                {
-                    outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
-                }
-                else
-                {
-                    var panel = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle);
+                var panel = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle);
 
-                    panel?.Close();
+                panel?.Close();
 
-                    outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
-                }
+                outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
             }
             catch (Exception exception)
             {
