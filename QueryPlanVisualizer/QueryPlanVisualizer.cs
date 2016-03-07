@@ -14,6 +14,7 @@ namespace ExecutionPlanVisualizer
     {
         private const string ExecutionPlanPanelTitle = "Query Execution Plan";
         private static bool shouldExtract = true;
+        private static OutputPanel outputPanel;
 
         public static void DumpPlan<T>(this IQueryable<T> queryable)
         {
@@ -47,7 +48,30 @@ namespace ExecutionPlanVisualizer
                     Indexes = indexes
                 };
 
-                PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                queryPlanUserControl.IndexCreated += (sender, args) =>
+                {
+                    if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        using (var token = Util.GetQueryLifeExtensionToken())
+                        {
+                            DumpPlan(queryable);
+                        }
+                    }
+                };
+
+                if (outputPanel == null)
+                {
+                    outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                }
+                else
+                {
+                    var panel = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle);
+
+                    panel?.Close();
+
+                    outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                }
             }
             catch (Exception exception)
             {

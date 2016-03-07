@@ -113,7 +113,7 @@ namespace ExecutionPlanVisualizer
             }
 
             if (MessageBox.Show("Do you really want to create this index?", "Confirm", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) != DialogResult.Yes)
+                    MessageBoxIcon.Warning) != DialogResult.Yes)
             {
                 return;
             }
@@ -127,16 +127,17 @@ namespace ExecutionPlanVisualizer
 
                 await DatabaseHelper.CreateIndexAsync(Util.CurrentDataContext.Connection, script);
 
-                MessageBox.Show("Index created");
+                IndexCreated?.Invoke(sender, e);
             }
             catch (Exception exception)
             {
-                MessageBox.Show($"Cannot create index. {exception.Message}");
+                MessageBox.Show($"Cannot create index. {exception.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             indexesDataGridView.Enabled = true;
-
             progressBar.Visible = indexLabel.Visible = false;
         }
+
+        public event EventHandler IndexCreated;
     }
 }
