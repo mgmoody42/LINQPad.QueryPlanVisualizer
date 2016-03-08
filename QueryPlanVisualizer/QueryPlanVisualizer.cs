@@ -14,9 +14,8 @@ namespace ExecutionPlanVisualizer
     {
         private const string ExecutionPlanPanelTitle = "Query Execution Plan";
         private static bool shouldExtract = true;
-        private static OutputPanel outputPanel;
 
-        public static void DumpPlan<T>(this IQueryable<T> queryable)
+        public static void DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
         {
             var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
 
@@ -25,6 +24,11 @@ namespace ExecutionPlanVisualizer
                 var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
                 return;
+            }
+
+            if (dumpData)
+            {
+                queryable.Dump();
             }
 
             try
@@ -61,7 +65,7 @@ namespace ExecutionPlanVisualizer
 
                 panel?.Close();
 
-                outputPanel = PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
             }
             catch (Exception exception)
             {
