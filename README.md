@@ -1,11 +1,11 @@
 # QueryPlanVisualizer [![NuGet Version](https://buildstats.info/nuget/LINQPadQueryPlanVisualizer)](https://www.nuget.org/packages/LINQPadQueryPlanVisualizer/) [![Apache license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](https://github.com/Giorgi/QueryPlanVisualizer/blob/master/LICENSE.md)
-Sql Server query execution plan visualizer for LINQPad.
+SQL Server query execution plan visualizer for LINQPad.
 
 ## Features
 * View query execution plan inside LINQPad
 * View missing indexes for query
 * Create missing indexes directly from LINQPad
-* Open plan in Sql Server Management Studio or other default app
+* Open plan in SQL Server Management Studio or other default app
 * Save plan to xml file
 
 ## Getting Started
