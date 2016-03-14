@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>LINQPadQueryPlanVisualizer</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>LINQPad Query Plan Visualizer</title>
         <authors>Giorgi</authors>
         <licenseUrl>https://github.com/Giorgi/QueryPlanVisualizer/blob/master/License.md</licenseUrl>
@@ -22,6 +22,6 @@ Features Include:
         <tags>LINQPad SqlServer</tags>
     </metadata>
     <files>
-        <file src="QueryPlanVisualizer\bin\Release\ExecutionPlanVisualizer.dll" target="lib\net45\ExecutionPlanVisualizer.dll" />
+        <file src="QueryPlanVisualizer\bin\Release\LINQPad.QueryPlanVisualizer.dll" target="lib\net45\LINQPad.QueryPlanVisualizer.dll" />
     </files>
 </package>
