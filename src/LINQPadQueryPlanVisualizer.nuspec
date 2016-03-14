@@ -5,21 +5,21 @@
         <version>1.0.1</version>
         <title>LINQPad Query Plan Visualizer</title>
         <authors>Giorgi</authors>
-        <licenseUrl>https://github.com/Giorgi/QueryPlanVisualizer/blob/master/License.md</licenseUrl>
-        <projectUrl>https://github.com/Giorgi/QueryPlanVisualizer</projectUrl>
+        <licenseUrl>https://github.com/Giorgi/LINQPad.QueryPlanVisualizer/blob/master/License.md</licenseUrl>
+        <projectUrl>https://github.com/Giorgi/LINQPad.QueryPlanVisualizer</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Sql Server query execution plan visualizer for LINQPad.
+        <description>SQL Server query execution plan visualizer for LINQPad.
 
 Features Include:
 
     View query execution plan inside LINQPad
     View missing indexes for query
     Create missing indexes directly from LINQPad
-    Open plan in Sql Server Management Studio or other default app
+    Open plan in SQL Server Management Studio or other default app
     Save plan to xml file</description>
-        <summary>Sql Server query execution plan visualizer for LINQPad</summary>
+        <summary>SQL Server query execution plan visualizer for LINQPad</summary>
         <releaseNotes>Initial Release</releaseNotes>
-        <tags>LINQPad SqlServer</tags>
+        <tags>LINQPad SQL SQLServer</tags>
     </metadata>
     <files>
         <file src="QueryPlanVisualizer\bin\Release\LINQPad.QueryPlanVisualizer.dll" target="lib\net45\LINQPad.QueryPlanVisualizer.dll" />
