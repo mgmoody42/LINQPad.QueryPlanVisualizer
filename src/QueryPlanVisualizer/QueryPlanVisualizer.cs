@@ -15,15 +15,15 @@ namespace ExecutionPlanVisualizer
         private const string ExecutionPlanPanelTitle = "Query Execution Plan";
         private static bool shouldExtract = true;
 
-        public static void DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
+        public static IQueryable<T> DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
         {
             var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
 
             if (sqlConnection == null)
             {
-                var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
+                var control = new Label {Text = "Query Plan Visualizer supports only Sql Server"};
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
-                return;
+                return queryable;
             }
 
             if (dumpData)
@@ -69,9 +69,10 @@ namespace ExecutionPlanVisualizer
             }
             catch (Exception exception)
             {
-                var control = new Label { Text = exception.ToString() };
+                var control = new Label {Text = exception.ToString()};
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
+            return queryable;
         }
 
         private static List<string> ExtractFiles()
