@@ -58,12 +58,14 @@
             // 
             // webBrowser
             // 
-            this.webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.webBrowser.Location = new System.Drawing.Point(3, 3);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(849, 449);
-            this.webBrowser.TabIndex = 0;
+            this.webBrowser.Size = new System.Drawing.Size(730, 388);
+            this.webBrowser.TabIndex = 9;
             // 
             // savePlanButton
             // 
