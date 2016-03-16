@@ -9,6 +9,9 @@ namespace ExecutionPlanVisualizer
 {
     public partial class QueryPlanUserControl : UserControl
     {
+        private string planXml;
+        private List<MissingIndexDetails> indexes;
+
         public QueryPlanUserControl()
         {
             InitializeComponent();
@@ -26,17 +29,11 @@ namespace ExecutionPlanVisualizer
             }
         }
 
-        public string PlanHtml { get; set; }
-
-        public string PlanXml { get; set; }
-
-        public List<MissingIndexDetails> Indexes { get; set; } = new List<MissingIndexDetails>();
-
         private void SavePlanButtonClick(object sender, EventArgs e)
         {
             if (savePlanFileDialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(savePlanFileDialog.FileName, PlanXml);
+                File.WriteAllText(savePlanFileDialog.FileName, planXml);
 
                 planLocationLinkLabel.Text = savePlanFileDialog.FileName;
                 planSavedLabel.Visible = planLocationLinkLabel.Visible = true;
@@ -46,7 +43,7 @@ namespace ExecutionPlanVisualizer
         private void OpenPlanButtonClick(object sender, EventArgs e)
         {
             var tempFile = Path.ChangeExtension(Path.GetTempFileName(), "sqlplan");
-            File.WriteAllText(tempFile, PlanXml);
+            File.WriteAllText(tempFile, planXml);
 
             try
             {
@@ -61,26 +58,6 @@ namespace ExecutionPlanVisualizer
         private void PlanLocationLinkLabelLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("explorer.exe", $"/select,\"{planLocationLinkLabel.Text}\"");
-        }
-
-        private void QueryPlanUserControlVisibleChanged(object sender, EventArgs e)
-        {
-            webBrowser.DocumentText = PlanHtml;
-
-            if (Indexes.Count > 0 && tabControl.TabPages.Count == 1)
-            {
-                tabControl.TabPages.Add(indexesTabPage);
-            }
-
-            if (Indexes.Count == 0 && tabControl.TabPages.Count > 1)
-            {
-                tabControl.TabPages.Remove(indexesTabPage);
-            }
-
-            indexesTabPage.Text = $"{Indexes.Count} Missing Index{(Indexes.Count > 1 ? "es" : "")}";
-
-            indexesDataGridView.DataSource = Indexes;
-            indexesDataGridView.ResetBindings();
         }
 
         private void IndexesDataGridViewDataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -104,7 +81,6 @@ namespace ExecutionPlanVisualizer
         private async void IndexesDataGridViewCellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //http://stackoverflow.com/a/13687844/239438
-
             if (!(indexesDataGridView.Columns[e.ColumnIndex] is DataGridViewButtonColumn) || e.RowIndex < 0)
             {
                 return;
@@ -116,7 +92,7 @@ namespace ExecutionPlanVisualizer
                 return;
             }
 
-            var script = Indexes[e.RowIndex].Script;
+            var script = indexes[e.RowIndex].Script;
 
             try
             {
@@ -137,5 +113,28 @@ namespace ExecutionPlanVisualizer
         }
 
         public event EventHandler IndexCreated;
+
+        public void DisplayExecutionPlanDetails(string planXml, string planHtml, List<MissingIndexDetails> indexes)
+        {
+            this.planXml = planXml;
+            this.indexes = indexes;
+
+            webBrowser.DocumentText = planHtml;
+
+            if (this.indexes.Count > 0 && tabControl.TabPages.Count == 1)
+            {
+                tabControl.TabPages.Add(indexesTabPage);
+            }
+
+            if (this.indexes.Count == 0 && tabControl.TabPages.Count > 1)
+            {
+                tabControl.TabPages.Remove(indexesTabPage);
+            }
+
+            indexesTabPage.Text = $"{this.indexes.Count} Missing Index{(this.indexes.Count > 1 ? "es" : "")}";
+
+            indexesDataGridView.DataSource = this.indexes;
+            indexesDataGridView.ResetBindings();
+        }
     }
 }

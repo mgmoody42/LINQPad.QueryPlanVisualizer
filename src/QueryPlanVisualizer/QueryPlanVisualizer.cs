@@ -21,7 +21,7 @@ namespace ExecutionPlanVisualizer
 
             if (sqlConnection == null)
             {
-                var control = new Label {Text = "Query Plan Visualizer supports only Sql Server"};
+                var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
                 return queryable;
             }
@@ -45,31 +45,29 @@ namespace ExecutionPlanVisualizer
                 files.Add(planHtml);
 
                 var html = string.Format(Resources.template, files.ToArray());
-                var queryPlanUserControl = new QueryPlanUserControl
-                {
-                    PlanXml = planXml,
-                    PlanHtml = html,
-                    Indexes = indexes
-                };
 
-                queryPlanUserControl.IndexCreated += (sender, args) =>
+                var control = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle)?.GetControl() as QueryPlanUserControl;
+
+                if (control == null)
                 {
-                    if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    control = new QueryPlanUserControl();
+
+                    control.IndexCreated += (sender, args) =>
                     {
-                        DumpPlan(queryable);
-                    }
-                };
+                        if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            DumpPlan(queryable);
+                        }
+                    };
 
-                var panel = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle);
-
-                panel?.Close();
-
-                PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                    PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
+                }
+                control.DisplayExecutionPlanDetails(planXml, html, indexes);
             }
             catch (Exception exception)
             {
-                var control = new Label {Text = exception.ToString()};
+                var control = new Label { Text = exception.ToString() };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
             return queryable;

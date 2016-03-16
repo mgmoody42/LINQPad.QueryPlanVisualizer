@@ -257,7 +257,6 @@
             this.Controls.Add(this.savePlanButton);
             this.Name = "QueryPlanUserControl";
             this.Size = new System.Drawing.Size(863, 529);
-            this.VisibleChanged += new System.EventHandler(this.QueryPlanUserControlVisibleChanged);
             this.tabControl.ResumeLayout(false);
             this.planTabPage.ResumeLayout(false);
             this.indexesTabPage.ResumeLayout(false);
