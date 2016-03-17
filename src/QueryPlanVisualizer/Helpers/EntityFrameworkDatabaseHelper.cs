@@ -29,6 +29,10 @@ namespace ExecutionPlanVisualizer.Helpers
                     throw;
                 }
             }
+            finally
+            {
+                DbInterception.Remove(interceptor);
+            }
 
             if (interceptor.Command == null)
             {
@@ -53,7 +57,6 @@ namespace ExecutionPlanVisualizer.Helpers
 
             command.Parameters.AddRange(copiedParameters);
 
-            command.Disposed += (sender, args) => DbInterception.Remove(interceptor);
 
             return command;
         }

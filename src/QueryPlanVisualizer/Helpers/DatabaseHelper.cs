@@ -88,14 +88,7 @@ namespace ExecutionPlanVisualizer.Helpers
                 Connection.Close();
             }
         }
-
-        /// <summary>
-        /// Create the <see cref="DbCommand"/> that will be run to 
-        /// acquire a query plan. The returned <see cref="DbCommand"/>
-        /// will be disposed.
-        /// </summary>
-        /// <param name="queryable"></param>
-        /// <returns></returns>
+        
         protected abstract DbCommand CreateCommand(IQueryable queryable);
 
     }
