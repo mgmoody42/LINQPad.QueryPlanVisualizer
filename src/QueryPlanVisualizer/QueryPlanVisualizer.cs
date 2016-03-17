@@ -17,13 +17,19 @@ namespace ExecutionPlanVisualizer
 
         public static IQueryable<T> DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
         {
+            DumpPlanInternal(queryable, dumpData, true);
+
+            return queryable;
+        }
+
+        private static void DumpPlanInternal<T>(IQueryable<T> queryable, bool dumpData, bool addNewPanel)
+        {
             var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
 
             if (sqlConnection == null)
             {
                 var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
-                return queryable;
             }
 
             if (dumpData)
@@ -48,7 +54,7 @@ namespace ExecutionPlanVisualizer
 
                 var control = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle)?.GetControl() as QueryPlanUserControl;
 
-                if (control == null)
+                if (control == null || addNewPanel)
                 {
                     control = new QueryPlanUserControl();
 
@@ -57,7 +63,7 @@ namespace ExecutionPlanVisualizer
                         if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
                             MessageBoxIcon.Question) == DialogResult.Yes)
                         {
-                            DumpPlan(queryable);
+                            DumpPlanInternal(queryable, false, false);
                         }
                     };
 
@@ -67,10 +73,9 @@ namespace ExecutionPlanVisualizer
             }
             catch (Exception exception)
             {
-                var control = new Label { Text = exception.ToString() };
+                var control = new Label {Text = exception.ToString()};
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
-            return queryable;
         }
 
         private static List<string> ExtractFiles()
