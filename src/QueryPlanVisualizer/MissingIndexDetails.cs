@@ -37,7 +37,7 @@ namespace ExecutionPlanVisualizer
             if (IncludeColumns?.Count > 0)
             {
                 var includeColumns = string.Join(",", IncludeColumns);
-                script += $"{Environment.NewLine}INCLUDE ({includeColumns})";
+                script += $" INCLUDE ({includeColumns})";
             }
 
             return script;

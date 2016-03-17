@@ -79,7 +79,6 @@
     <Compile Include="XmlUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\MissingIndexDetails.datasource" />
     <None Include="Resources\showplanxml.xsd">
