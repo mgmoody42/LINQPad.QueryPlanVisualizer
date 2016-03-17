@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using ExecutionPlanVisualizer.Helpers;
 using ExecutionPlanVisualizer.Properties;
 using LINQPad;
 
@@ -17,9 +18,11 @@ namespace ExecutionPlanVisualizer
 
         public static IQueryable<T> DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
         {
-            var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
+            var databaseHelper = DatabaseHelper.Create(Util.CurrentDataContext);
+            
+            var sqlConnection = Util.CurrentDataContext?.Connection as SqlConnection;
 
-            if (sqlConnection == null)
+            if (databaseHelper is LinqToSqlDatabaseHelper && sqlConnection == null)
             {
                 var control = new Label {Text = "Query Plan Visualizer supports only Sql Server"};
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
@@ -33,7 +36,7 @@ namespace ExecutionPlanVisualizer
 
             try
             {
-                var planXml = DatabaseHelper.GetSqlServerQueryExecutionPlan(Util.CurrentDataContext.Connection, queryable);
+                var planXml = databaseHelper.GetSqlServerQueryExecutionPlan(queryable);
 
                 var queryPlanProcessor = new QueryPlanProcessor(planXml);
 
@@ -49,7 +52,8 @@ namespace ExecutionPlanVisualizer
                 {
                     PlanXml = planXml,
                     PlanHtml = html,
-                    Indexes = indexes
+                    Indexes = indexes,
+                    DatabaseHelper = databaseHelper
                 };
 
                 queryPlanUserControl.IndexCreated += (sender, args) =>
