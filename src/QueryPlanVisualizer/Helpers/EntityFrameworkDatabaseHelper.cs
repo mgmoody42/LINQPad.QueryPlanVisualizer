@@ -8,86 +8,56 @@ namespace ExecutionPlanVisualizer.Helpers
 {
     internal class EntityFrameworkDatabaseHelper : DatabaseHelper
     {
-        public override string GetSqlServerQueryExecutionPlan<T>(IQueryable<T> queryable)
+        protected override DbCommand CreateCommand(IQueryable queryable)
         {
             var interceptor = new CommandCapturingInterceptor();
+
+            DbInterception.Add(interceptor);
+
             try
             {
-
-                DbInterception.Add(interceptor);
-
-                try
-                {
-                    var result = queryable.Provider.Execute(queryable.Expression);
-                }
-                catch (Exception ex)
-                {
-                    if (ex is CommandCapturedException || ex.InnerException is CommandCapturedException)
-                    {
-                        // ignore
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                if (interceptor.Command == null)
-                {
-                    throw new InvalidOperationException("DbInterception failed to capture DbCommand.");
-                }
-
-                Connection = interceptor.Command.Connection;
-
-                Connection.Open();
-
-                try
-                {
-                    using (var command = Connection.CreateCommand())
-                    {
-                        command.CommandText = "SET STATISTICS XML ON";
-                        command.ExecuteNonQuery();
-                    }
-
-                    using (var command = Connection.CreateCommand())
-                    {
-                        command.CommandText = interceptor.Command.CommandText;
-                        foreach (DbParameter parameter in interceptor.Command.Parameters)
-                        {
-                            var parameterCopy = command.CreateParameter();
-                            parameterCopy.ParameterName = parameter.ParameterName;
-                            parameterCopy.DbType = parameter.DbType;
-                            parameterCopy.Value = parameter.Value;
-
-                            command.Parameters.Add(parameterCopy);
-                        }
-
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.NextResult())
-                            {
-                                if (reader.GetName(0) == "Microsoft SQL Server 2005 XML Showplan")
-                                {
-                                    reader.Read();
-                                    return reader.GetString(0);
-                                }
-                            }
-                        }
-                    }
-
-                }
-                finally
-                {
-                    Connection.Close();
-                }
+                var result = queryable.Provider.Execute(queryable.Expression);
             }
-            finally
+            catch (Exception ex)
             {
-                DbInterception.Remove(interceptor);
+                if (ex is CommandCapturedException || ex.InnerException is CommandCapturedException)
+                {
+                    // ignore
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            return null;
+            if (interceptor.Command == null)
+            {
+                throw new InvalidOperationException("DbInterception failed to capture DbCommand.");
+            }
+
+            Connection = interceptor.Command.Connection;
+
+            var command = Connection.CreateCommand();
+
+            command.CommandText = interceptor.Command.CommandText;
+            var copiedParameters = interceptor.Command.Parameters.OfType<DbParameter>()
+                                              .Select(parameter =>
+                                              {
+                                                  var parameterCopy = command.CreateParameter();
+                                                  parameterCopy.ParameterName = parameter.ParameterName;
+                                                  parameterCopy.DbType = parameter.DbType;
+                                                  parameterCopy.Value = parameter.Value;
+                                                  return parameterCopy;
+                                              })
+                                              .ToArray();
+
+            command.Parameters.AddRange(copiedParameters);
+
+            command.Disposed += (sender, args) => DbInterception.Remove(interceptor);
+
+            return command;
         }
+
         private class CommandCapturedException : Exception { }
 
         private sealed class CommandCapturingInterceptor : IDbCommandInterceptor
@@ -119,12 +89,6 @@ namespace ExecutionPlanVisualizer.Helpers
             public void ScalarExecuted(DbCommand command, DbCommandInterceptionContext<object> interceptionContext)
             {
             }
-        }
-
-        public Task CreateIndexAsync(DbConnection connection, string script)
-        {
-
-            return null;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace ExecutionPlanVisualizer.Helpers
             if (dataContextBase == null)
             {
                 return new EntityFrameworkDatabaseHelper();
-            } 
+            }
 
             return new LinqToSqlDatabaseHelper(dataContextBase.Connection);
         }
@@ -33,7 +34,42 @@ namespace ExecutionPlanVisualizer.Helpers
             set { _dbConnection = value; }
         }
 
-        public abstract string GetSqlServerQueryExecutionPlan<T>(IQueryable<T> queryable);
+        public virtual string GetSqlServerQueryExecutionPlan<T>(IQueryable<T> queryable)
+        {
+            using (var command = CreateCommand(queryable))
+            {
+                try
+                {
+                    Connection.Open();
+
+                    using (var setStatisticsCommand = Connection.CreateCommand())
+                    {
+                        setStatisticsCommand.CommandText = "SET STATISTICS XML ON";
+                        setStatisticsCommand.ExecuteNonQuery();
+                    }
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.NextResult())
+                        {
+                            if (reader.GetName(0) == "Microsoft SQL Server 2005 XML Showplan")
+                            {
+                                reader.Read();
+                                {
+                                    return reader.GetString(0);
+                                }
+                            }
+                        }
+                    }
+
+                    return null;
+                }
+                finally
+                {
+                    Connection.Close();
+                }
+            }
+        }
 
         public virtual async Task CreateIndexAsync(string script)
         {
@@ -52,5 +88,15 @@ namespace ExecutionPlanVisualizer.Helpers
                 Connection.Close();
             }
         }
+
+        /// <summary>
+        /// Create the <see cref="DbCommand"/> that will be run to 
+        /// acquire a query plan. The returned <see cref="DbCommand"/>
+        /// will be disposed.
+        /// </summary>
+        /// <param name="queryable"></param>
+        /// <returns></returns>
+        protected abstract DbCommand CreateCommand(IQueryable queryable);
+
     }
 }
