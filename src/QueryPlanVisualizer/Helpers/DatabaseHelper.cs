@@ -55,9 +55,7 @@ namespace ExecutionPlanVisualizer.Helpers
                             if (reader.GetName(0) == "Microsoft SQL Server 2005 XML Showplan")
                             {
                                 reader.Read();
-                                {
-                                    return reader.GetString(0);
-                                }
+                                return reader.GetString(0);
                             }
                         }
                     }

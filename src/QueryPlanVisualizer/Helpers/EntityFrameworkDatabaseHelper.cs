@@ -2,7 +2,6 @@ using System;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure.Interception;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExecutionPlanVisualizer.Helpers
 {
@@ -52,8 +51,7 @@ namespace ExecutionPlanVisualizer.Helpers
                                                   parameterCopy.DbType = parameter.DbType;
                                                   parameterCopy.Value = parameter.Value;
                                                   return parameterCopy;
-                                              })
-                                              .ToArray();
+                                              }).ToArray();
 
             command.Parameters.AddRange(copiedParameters);
 
@@ -65,7 +63,7 @@ namespace ExecutionPlanVisualizer.Helpers
 
         private sealed class CommandCapturingInterceptor : IDbCommandInterceptor
         {
-            public DbCommand Command { get; set; }
+            public DbCommand Command { get; private set; }
 
             public void NonQueryExecuting(DbCommand command, DbCommandInterceptionContext<int> interceptionContext)
             {
@@ -78,7 +76,7 @@ namespace ExecutionPlanVisualizer.Helpers
             public void ReaderExecuting(DbCommand command, DbCommandInterceptionContext<DbDataReader> interceptionContext)
             {
                 Command = command;
-                throw new CommandCapturedException();
+                interceptionContext.Exception = new CommandCapturedException();
             }
 
             public void ReaderExecuted(DbCommand command, DbCommandInterceptionContext<DbDataReader> interceptionContext)
