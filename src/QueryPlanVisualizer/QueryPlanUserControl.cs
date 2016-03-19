@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using ExecutionPlanVisualizer.Helpers;
 using LINQPad;
 
 namespace ExecutionPlanVisualizer
@@ -28,6 +29,15 @@ namespace ExecutionPlanVisualizer
                 openPlanButton.Text = $"Open with {fileDescription}";
             }
         }
+
+        public string PlanHtml { get; set; }
+
+        public string PlanXml { get; set; }
+
+        public List<MissingIndexDetails> Indexes { get; set; } = new List<MissingIndexDetails>();
+
+        internal DatabaseHelper DatabaseHelper { get; set; }
+
 
         private void SavePlanButtonClick(object sender, EventArgs e)
         {
@@ -99,7 +109,7 @@ namespace ExecutionPlanVisualizer
                 indexesDataGridView.Enabled = false;
                 progressBar.Visible = indexLabel.Visible = true;
 
-                await DatabaseHelper.CreateIndexAsync(Util.CurrentDataContext.Connection, script);
+                await DatabaseHelper.CreateIndexAsync(script);
 
                 IndexCreated?.Invoke(sender, e);
             }
