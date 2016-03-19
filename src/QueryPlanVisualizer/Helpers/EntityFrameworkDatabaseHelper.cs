@@ -17,16 +17,8 @@ namespace ExecutionPlanVisualizer.Helpers
             {
                 var result = queryable.Provider.Execute(queryable.Expression);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is CommandCapturedException || ex.InnerException is CommandCapturedException)
             {
-                if (ex is CommandCapturedException || ex.InnerException is CommandCapturedException)
-                {
-                    // ignore
-                }
-                else
-                {
-                    throw;
-                }
             }
             finally
             {
