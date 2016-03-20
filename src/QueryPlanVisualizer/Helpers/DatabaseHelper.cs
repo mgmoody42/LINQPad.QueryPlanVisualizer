@@ -1,7 +1,8 @@
 using System;
-using System.Data;
 using System.Data.Common;
+using System.Data.Linq;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using LINQPad;
 
@@ -11,14 +12,34 @@ namespace ExecutionPlanVisualizer.Helpers
     {
         private DbConnection _dbConnection;
 
-        public static DatabaseHelper Create(DataContextBase dataContextBase)
+        public static DatabaseHelper Create<T>(DataContextBase dataContextBase, IQueryable<T> queryable)
         {
-            if (dataContextBase == null)
+            if (dataContextBase != null)
             {
-                return new EntityFrameworkDatabaseHelper();
+                return new LinqToSqlDatabaseHelper(dataContextBase);
             }
 
-            return new LinqToSqlDatabaseHelper(dataContextBase.Connection);
+            var table = queryable as ITable;
+
+            if (table != null)
+            {
+                return new LinqToSqlDatabaseHelper(table.Context);
+            }
+
+            var dataQueryType = typeof(DataContext).Assembly.GetType("System.Data.Linq.DataQuery`1");
+
+            if (queryable.GetType().GetGenericTypeDefinition() == dataQueryType)
+            {
+                var contextField = queryable.GetType().GetField("context", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+                var context = contextField?.GetValue(queryable) as DataContext;
+
+                if (context != null)
+                {
+                    return new LinqToSqlDatabaseHelper(context);
+                }
+            }
+
+            return new EntityFrameworkDatabaseHelper();
         }
 
         public DbConnection Connection
@@ -86,8 +107,7 @@ namespace ExecutionPlanVisualizer.Helpers
                 Connection.Close();
             }
         }
-        
-        protected abstract DbCommand CreateCommand(IQueryable queryable);
 
+        protected abstract DbCommand CreateCommand(IQueryable queryable);
     }
 }

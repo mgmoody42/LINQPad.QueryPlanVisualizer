@@ -1,20 +1,22 @@
-using System;
 using System.Data.Common;
+using System.Data.Linq;
 using System.Linq;
-using LINQPad;
 
 namespace ExecutionPlanVisualizer.Helpers
 {
     internal class LinqToSqlDatabaseHelper : DatabaseHelper
     {
-        public LinqToSqlDatabaseHelper(DbConnection connection)
+        private readonly DataContext dataContext;
+
+        public LinqToSqlDatabaseHelper(DataContext dataContext)
         {
-            Connection = connection;
+            this.dataContext = dataContext;
+            Connection = dataContext.Connection;
         }
 
         protected override DbCommand CreateCommand(IQueryable queryable)
         {
-            return Util.CurrentDataContext.GetCommand(queryable);
+            return dataContext.GetCommand(queryable);
         }
     }
 }

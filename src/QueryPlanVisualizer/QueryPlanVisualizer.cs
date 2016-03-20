@@ -25,15 +25,14 @@ namespace ExecutionPlanVisualizer
 
         private static void DumpPlanInternal<T>(IQueryable<T> queryable, bool dumpData, bool addNewPanel)
         {
-            var databaseHelper = DatabaseHelper.Create(Util.CurrentDataContext);
-
-            var sqlConnection = Util.CurrentDataContext?.Connection as SqlConnection;
-
-            if (databaseHelper is LinqToSqlDatabaseHelper && sqlConnection == null)
+            if (Util.CurrentDataContext != null && !(Util.CurrentDataContext.Connection is SqlConnection))
             {
                 var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
+                return;
             }
+
+            var databaseHelper = DatabaseHelper.Create(Util.CurrentDataContext, queryable);
 
             if (dumpData)
             {
@@ -60,9 +59,9 @@ namespace ExecutionPlanVisualizer
                 if (control == null || addNewPanel)
                 {
                     control = new QueryPlanUserControl()
-                              {
-                                  DatabaseHelper = databaseHelper
-                              };
+                    {
+                        DatabaseHelper = databaseHelper
+                    };
 
                     control.IndexCreated += (sender, args) =>
                     {
@@ -79,7 +78,7 @@ namespace ExecutionPlanVisualizer
             }
             catch (Exception exception)
             {
-                var control = new Label {Text = exception.ToString()};
+                var control = new Label { Text = exception.ToString() };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
         }

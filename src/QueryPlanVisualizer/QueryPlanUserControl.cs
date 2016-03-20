@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using ExecutionPlanVisualizer.Helpers;
-using LINQPad;
 
 namespace ExecutionPlanVisualizer
 {
