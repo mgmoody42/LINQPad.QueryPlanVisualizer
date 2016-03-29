@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using ExecutionPlanVisualizer.Helpers;
 using ExecutionPlanVisualizer.Properties;
 using LINQPad;
 
@@ -17,14 +18,21 @@ namespace ExecutionPlanVisualizer
 
         public static IQueryable<T> DumpPlan<T>(this IQueryable<T> queryable, bool dumpData = false)
         {
-            var sqlConnection = Util.CurrentDataContext.Connection as SqlConnection;
+            DumpPlanInternal(queryable, dumpData, true);
 
-            if (sqlConnection == null)
+            return queryable;
+        }
+
+        private static void DumpPlanInternal<T>(IQueryable<T> queryable, bool dumpData, bool addNewPanel)
+        {
+            if (Util.CurrentDataContext != null && !(Util.CurrentDataContext.Connection is SqlConnection))
             {
-                var control = new Label {Text = "Query Plan Visualizer supports only Sql Server"};
+                var control = new Label { Text = "Query Plan Visualizer supports only Sql Server" };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
-                return queryable;
+                return;
             }
+
+            var databaseHelper = DatabaseHelper.Create(Util.CurrentDataContext, queryable);
 
             if (dumpData)
             {
@@ -33,7 +41,7 @@ namespace ExecutionPlanVisualizer
 
             try
             {
-                var planXml = DatabaseHelper.GetSqlServerQueryExecutionPlan(Util.CurrentDataContext.Connection, queryable);
+                var planXml = databaseHelper.GetSqlServerQueryExecutionPlan(queryable);
 
                 var queryPlanProcessor = new QueryPlanProcessor(planXml);
 
@@ -45,34 +53,34 @@ namespace ExecutionPlanVisualizer
                 files.Add(planHtml);
 
                 var html = string.Format(Resources.template, files.ToArray());
-                var queryPlanUserControl = new QueryPlanUserControl
-                {
-                    PlanXml = planXml,
-                    PlanHtml = html,
-                    Indexes = indexes
-                };
 
-                queryPlanUserControl.IndexCreated += (sender, args) =>
+                var control = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle)?.GetControl() as QueryPlanUserControl;
+
+                if (control == null || addNewPanel)
                 {
-                    if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question) == DialogResult.Yes)
+                    control = new QueryPlanUserControl()
                     {
-                        DumpPlan(queryable);
-                    }
-                };
+                        DatabaseHelper = databaseHelper
+                    };
 
-                var panel = PanelManager.GetOutputPanel(ExecutionPlanPanelTitle);
+                    control.IndexCreated += (sender, args) =>
+                    {
+                        if (MessageBox.Show("Index created. Refresh query plan?", "", MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            DumpPlanInternal(queryable, false, false);
+                        }
+                    };
 
-                panel?.Close();
-
-                PanelManager.DisplayControl(queryPlanUserControl, ExecutionPlanPanelTitle);
+                    PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
+                }
+                control.DisplayExecutionPlanDetails(planXml, html, indexes);
             }
             catch (Exception exception)
             {
-                var control = new Label {Text = exception.ToString()};
+                var control = new Label { Text = exception.ToString() };
                 PanelManager.DisplayControl(control, ExecutionPlanPanelTitle);
             }
-            return queryable;
         }
 
         private static List<string> ExtractFiles()
